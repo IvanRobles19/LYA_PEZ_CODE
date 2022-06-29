@@ -56,7 +56,7 @@ espacio=[ ,\t,\r,\n]+
 "_"{Identificador} { return token(yytext(), "IDENTIFICADOR", yyline, yycolumn); }
 
 /* Numero */
-{Numero} { return token(yytext(), "N_ENTERO", yyline, yycolumn);}
+{Numero}|{Numero_deci} { return token(yytext(), "N_ENTERO", yyline, yycolumn);}
 
 /* Numero */
 VERDADERO |
@@ -69,9 +69,7 @@ Numero_deci { return token(yytext(), "N_DECIMAL", yyline, yycolumn);}
 "K_"{cad}= { return token(yytext(), "CADENA", yyline, yycolumn);}
     
 /*TIPO DATO*/
-ENTERO |
-DOBLE |
-FLOTANTE { return token(yytext(), "TIPO_DATO", yyline, yycolumn);}
+NUMERO { return token(yytext(), "TIPO_DATO", yyline, yycolumn);}
 
 MEDIR { return token(yytext(), "ACCION_MEDIR", yyline, yycolumn);}
 DISPENSAR { return token(yytext(), "ACCION_DISPENSAR", yyline, yycolumn);}
@@ -130,8 +128,8 @@ repetirMientras { return token(yytext(), "REPETIR", yyline, yycolumn);}
 interrumpir { return token(yytext(), "DETENER_REPETIR", yyline, yycolumn);}
 
 /* Estructura Si IF */
-si |
-sino { return token(yytext(), "ESTRUCTURA_SI", yyline, yycolumn);}
+si { return token(yytext(), "ESTRUCTURA_SI", yyline, yycolumn);}
+no { return token(yytext(), "ESTRUCTURA_SI_NO", yyline, yycolumn);}
 
 /* Final */
 final { return token(yytext(), "FINAL", yyline, yycolumn);}

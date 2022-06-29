@@ -87,8 +87,8 @@
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
-                  <Component id="jTabbedPane4" min="-2" pref="446" max="-2" attributes="0"/>
-                  <EmptySpace pref="74" max="32767" attributes="0"/>
+                  <Component id="jTabbedPane4" min="-2" pref="490" max="-2" attributes="0"/>
+                  <EmptySpace pref="30" max="32767" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -195,7 +195,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
                       <Component id="jScrollPane8" min="-2" pref="187" max="-2" attributes="0"/>
-                      <EmptySpace pref="148" max="32767" attributes="0"/>
+                      <EmptySpace pref="194" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -272,7 +272,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
                       <Component id="jScrollPane7" min="-2" pref="187" max="-2" attributes="0"/>
-                      <EmptySpace pref="152" max="32767" attributes="0"/>
+                      <EmptySpace pref="198" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -364,7 +364,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="67" max="-2" attributes="0"/>
                       <Component id="jScrollPane6" min="-2" pref="187" max="-2" attributes="0"/>
-                      <EmptySpace pref="156" max="32767" attributes="0"/>
+                      <EmptySpace pref="202" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -444,7 +444,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="67" max="-2" attributes="0"/>
                       <Component id="jScrollPane5" min="-2" pref="221" max="-2" attributes="0"/>
-                      <EmptySpace pref="122" max="32767" attributes="0"/>
+                      <EmptySpace pref="168" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -470,27 +470,27 @@
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="3" rowCount="6">
                         <Column editable="true" title="METODOS" type="java.lang.Object">
-                          <Data value="MUTAR"/>
-                          <Data value="EVALUAR"/>
-                          <Data value="FIJAR_ORIGEN"/>
-                          <Data value="EXPANDIR"/>
-                          <Data value="GENERAR_GRAF"/>
+                          <Data value="MEDIR"/>
+                          <Data value="DISPENSAR"/>
+                          <Data value="LUZ"/>
+                          <Data value="NOTIFICAR"/>
+                          <Data value="CONTROL"/>
                           <Data value="null"/>
                         </Column>
                         <Column editable="true" title="PARAMETROS" type="java.lang.Object">
-                          <Data value="NUMERO(FASE)"/>
-                          <Data value="NUMERO(NUM.DE FASE,CANTIDAD DE PAISES,TEMPERATURA)"/>
-                          <Data value="NUMERO(LATITUD,ALTITUD)"/>
-                          <Data value="NUMERO(CANTIDAD DE PAISES)"/>
-                          <Data value="NUMERO(CANTIDAD DE PAISES,NUMERO DE INFECTADOS,FECHA INICIO,FECHA ACTUAL)"/>
+                          <Data value="SENSOR"/>
+                          <Data value="DISPOSITIVO"/>
+                          <Data value="CODIGO"/>
+                          <Data value="MENSAJE"/>
+                          <Data value=""/>
                           <Data value="null"/>
                         </Column>
                         <Column editable="true" title="ACCION" type="java.lang.Object">
-                          <Data value="CAMBIA DE FASE AL VIRUS"/>
-                          <Data value="MUESTRA UNA POSIBLE ESTIMACION DE SU ALCANCE"/>
-                          <Data value="FIJA UN PUNTO CON RESPECTO A UN MAPA MUNDIAL"/>
-                          <Data value="EXTIENDE EL RADIO DE ALCANCE CON RESPECTO A SU ORIGEN"/>
-                          <Data value="MUESTRA UNA GRAFICA DE LA SECUENCIA QUE SIGUE EL VIRUS"/>
+                          <Data value="OBTIENE VALORES DE SENSORES"/>
+                          <Data value="HABILITA ACCION EN DISPOSITIVOS"/>
+                          <Data value="CAMBIA LUCES"/>
+                          <Data value="MANDA AL DUE&#xd1;O UNA NOTIFICACION"/>
+                          <Data value=""/>
                           <Data value="null"/>
                         </Column>
                       </Table>
@@ -550,7 +550,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace pref="58" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="jScrollPane9" min="-2" pref="306" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
                   </Group>
@@ -578,19 +578,19 @@
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="1" rowCount="28">
                         <Column editable="true" title="PALABRAS" type="java.lang.Object">
-                          <Data value="Fin"/>
-                          <Data value="Dec"/>
-                          <Data value="Cad"/>
+                          <Data value="principal"/>
+                          <Data value="ENTERO"/>
+                          <Data value="cadena"/>
                           <Data value="Bool"/>
                           <Data value="Falso"/>
                           <Data value="Si"/>
                           <Data value="Sino"/>
-                          <Data value="Para"/>
+                          <Data value="repetir"/>
                           <Data value="Mientras"/>
                           <Data value="Evaluar"/>
                           <Data value="Arreglo"/>
                           <Data value="Func"/>
-                          <Data value="Generar_Graf"/>
+                          <Data value="flotante"/>
                           <Data value="Fase1"/>
                           <Data value="Fase2"/>
                           <Data value="Fase3"/>
@@ -602,9 +602,9 @@
                           <Data value="Nulo"/>
                           <Data value="Evaluar"/>
                           <Data value="Fijar_Origen"/>
-                          <Data value="Mutar"/>
-                          <Data value="Expandir"/>
-                          <Data value="activo"/>
+                          <Data value=""/>
+                          <Data value=""/>
+                          <Data value=""/>
                           <Data value="null"/>
                         </Column>
                       </Table>
@@ -644,12 +644,20 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="93" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" min="-2" pref="287" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
-                      <Component id="jLabel4" min="-2" pref="504" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="362" max="-2" attributes="0"/>
+                              <Component id="jScrollPane1" min="-2" pref="287" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
+                              <Component id="jLabel4" min="-2" pref="225" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
+                              <Component id="jScrollPane3" min="-2" pref="790" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace pref="28" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -657,11 +665,18 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jScrollPane1" pref="323" max="32767" attributes="0"/>
-                          <Component id="jLabel4" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="jLabel4" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="95" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="jScrollPane1" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace pref="48" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" min="-2" pref="25" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -684,6 +699,21 @@
             </Container>
             <Component class="javax.swing.JLabel" name="jLabel4">
             </Component>
+            <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+              <AuxValues>
+                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+              <SubComponents>
+                <Component class="javax.swing.JTextArea" name="txtAutomata">
+                  <Properties>
+                    <Property name="columns" type="int" value="20"/>
+                    <Property name="rows" type="int" value="5"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
           </SubComponents>
         </Container>
       </SubComponents>

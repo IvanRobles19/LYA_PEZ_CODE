@@ -37,6 +37,7 @@ public class Compilador extends javax.swing.JFrame {
     private Directory Directorio;
     private ArrayList<Token> tokens;
     private ArrayList<ErrorLSSL> errors;
+    private String errores=null;
     private ArrayList<TextColor> textsColor;
     private Timer timerKeyReleased;
     private ArrayList<Production> identProd;
@@ -45,6 +46,14 @@ public class Compilador extends javax.swing.JFrame {
     private int tamañojsp =11;
     private int tamAnte=100;
     private String finzz ="";
+    ArrayList<tokenSintac> tksintac = new ArrayList();
+    private int posicion=0;
+    private boolean estado=true;
+    private String estados;
+    private boolean contSentencias;
+    
+       
+    
 
     /**
      * Creates new form Compilador
@@ -229,6 +238,11 @@ public class Compilador extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
+        tksintac.clear();
+        posicion=0;
+        estado=true;
+        production=null;
+        errores=null;
         if (getTitle().contains("*") || getTitle().equals(title)) {
             if (Directorio.Save()) {
                 compile();
@@ -241,6 +255,7 @@ public class Compilador extends javax.swing.JFrame {
 
     private void btnEjecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEjecutarActionPerformed
         btnCompilar.doClick();
+        
         if (codeHasBeenCompiled) {
             if (errors.size() > 0) {
                 JOptionPane.showMessageDialog(null, "No se puede ejecutar el codigo ya que se encontro uno o mas errores");
@@ -359,7 +374,7 @@ public class Compilador extends javax.swing.JFrame {
         LexicalAnalisis();
         fillTableTokens();
         SintacticAnalisis();
-        SemanticAnalisis();
+        //SemanticAnalisis();
         ImprimirConsola();
         codeHasBeenCompiled = true;
     }
@@ -391,6 +406,8 @@ public class Compilador extends javax.swing.JFrame {
 
     private void fillTableTokens() {
         tokens.forEach(token -> {
+            tokenSintac tks=new  tokenSintac(token.getLexicalComp(),token.getLexeme(),token.getLine(),token.getColumn());
+            tksintac.add(tks);
             Object[] data = new Object[]{token.getLexicalComp(), token.getLexeme(),
                 "[" + token.getLine() + ", " + token.getColumn() + "]"};
             Functions.addRowDataInTable(tblLexemas, data);
@@ -398,166 +415,715 @@ public class Compilador extends javax.swing.JFrame {
     }
 
     private void SintacticAnalisis() {
-        finzz="";
-        Grammar gramatica = new Grammar(tokens, errors);
-
-        /* ELIMINACION DE ERRORES*/
-        gramatica.delete(new String[]{"ERROR", "ERROR_1", "ERROR_2","ERROR_3"}, 1);
-        
-        
-        /*AGRUPACION DE VALORES*/
-        gramatica.group("VALOR", "(N_ENTERO | N_DECIMAL)", true);
-        
-    
-        /*DECLARACION DE VARIABLES*/
-        gramatica.group("VARIABLE", "TIPO_DATO IDENTIFICADOR Op_Asig VALOR", true);
-        gramatica.group("VARIABLE", "TIPO_DATO Op_Asig VALOR", true, 2, "ERROR SINTACTICO {}: FALTA EL IDENTIFICADOR EN LA VARIABLE[#,%]");
-        gramatica.group("VARIABLE_TEMP", "TIPO_DATO IDENTIFICADOR Op_Asig TEMPERATURA");
-        gramatica.group("VARIABLE_TEMP", "TIPO_DATO Op_Asig TEMPERATURA", true, 9, "ERROR SINTACTICO {}: FALTA EL IDENTIFICADOR EN LA DECLARACION DE LA VARIABLE TEMPERATURA[#,%]");
-        gramatica.group("VARIABLE", "CADENA IDENTIFICADOR Op_Asig TEXTO", true);
-        gramatica.group("VARIABLE", "CADENA  Op_Asig TEXTO", true, 2, "ERROR SINTACTICO {}: FALTA EL IDENTIFICADOR EN LA VARIABLE[#,%]");
-        gramatica.group("VARIABLE", "CADENA IDENTIFICADOR Op_Asig VALOR", true, 2, "ERROR SINTACTICO {}: TIPO DE DATO INCOMPATIBLE SE ESPERA TEXTO EN LA VARIABLE[#,%]");
-        gramatica.group("VARIABLECF", "TIPO_DATO IDENTIFICADOR Op_Asig ACCION_MEDIR IDENTIFICADOR", true);
-        gramatica.group("VARIABLECF", "IDENTIFICADOR Op_Asig ACCION_MEDIR IDENTIFICADOR", true);
-        
-        gramatica.finalLineColumn();
-
-        gramatica.group("VARIABLE", "TIPO_DATO IDENTIFICADOR Op_Asig", 3, "ERROR SINTACTICO {}: FALTA EL VALOR EN LA DECLARACION [#, %]");
-         gramatica.group("VARIABLE", "CADENA IDENTIFICADOR Op_Asig", 3, "ERROR SINTACTICO {}: FALTA EL VALOR EN LA DECLARACION [#, %]");
-         //gramatica.group("VARIABLE", "CADENA IDENTIFICADOR Op_Asig", 3, "ERROR SINTACTICO {}: FALTA EL VALOR EN LA DECLARACION [#, %]");
-        gramatica.initialLineColumn();
-        
-        gramatica.group("DISPENSACIONX", " ACCION_DISPENSAR IDENTIFICADOR PUNTOyCOMA", true);
-        gramatica.finalLineColumn();
-        gramatica.group("DISPENSACIONX", " ACCION_DISPENSAR IDENTIFICADOR ", 3, "ERROR SINTACTICO {}: FALTA PUNTO Y COMA  EN LA ACCION [#, %]");
-        gramatica.initialLineColumn();
-
-
-        //AQUI SE AGREGAN MAS CONBINACIONES DESAPARECIENDO UN TOKEN,
-        //AGREGAR MAS VARIABLES O LO QUE SE NECESITE PARA LAS GRAMATICAS.
-        /* ELIMINACION DE TIPOS DE DATO Y OPERADORES DE ASIGNACION*/
-        gramatica.delete("TIPO_DATO", 4, "ERROR SINTACTICO {}: EL TIPO DE DATO NO ESTA EN UNA DECLARACION [#, %]");
-        gramatica.delete("Op_Asig", 4, "ERROR SINTACTICO{}: EL OPERADOR DE ASIGNACION NO ESTA EN UNA DELCARACION [#, %]");
-
-        /* AGRUPACION DE IDENTIFICADORES Y DEFINICION DE PARAMETROS */
-        gramatica.group("VALOR", "IDENTIFICADOR", true);
-        gramatica.group("PARAMETROS", "VALOR (COMA VALOR)+");
-        
-        
-
-
-        gramatica.finalLineColumn();
-     
-         gramatica.group("FUNCION", "(EVALUAR | FUNCION_MUTAR | FUNCION_FIJAR_ORIGEN | EXPANDIR | GENERAR_GRAF)", true);
-        gramatica.group("FUNCION_COMP", "FUNCION PARENTESIS_A (VALOR | PARAMETROS)? PARENTESIS_C", true);
-        gramatica.group("FUNCION_COMP", "FUNCION (VALOR | PARAMETROS)? PARENTESIS_C", true, 6, "ERROR SINTACTICO{}:FALTA EL PARENTESIS QUE ABRE EN LA FUNCION[#, %]");
-        gramatica.finalLineColumn();
-        gramatica.group("FUNCION_COMP", "FUNCION PARENTESIS_A (VALOR | PARAMETROS)", true, 7, "ERROR SINTACTICO{}:FALTA EL PARENTESIS QUE CIERRA EN LA FUNCION[#, %]");
-
-        gramatica.initialLineColumn();
-        
-        ////////operadores logicos
-        gramatica.group("OP_LOG", "(MENOR_QUE | MAYOR_QUE | MENOR_IGUAL_QUE | IGUAL_QUE | DIFERENTE_DE)", true);
-        
-         gramatica.group("OPLOGCOMP", "VALOR (OP_LOG VALOR)+");
          
-         gramatica.finalLineColumn();
-     
-         gramatica.group("OPLOGCOMP", "VALOR (OP_LOG )+", true, 7, "ERROR SINTACTICO{}:FALTA EL VALOR EN LA DECLARACION LOGICA[#, %]");
-         
-         /////////////////////////////////NOTIFICACION
-         gramatica.initialLineColumn();
-        
-        gramatica.group("NOTIFICACION", "ACCION_NOTIFICAR TEXTO PUNTOyCOMA", true);
-        gramatica.finalLineColumn();
-        gramatica.group("NOTIFICACION", " ACCION_NOTIFICAR TEXTO ", 20, "ERROR SINTACTICO {}: FALTA PUNTO Y COMA  EN LA NOTIFICACION [#, %]");
-        gramatica.group("NOTIFICACION", " ACCION_NOTIFICAR PUNTOyCOMA", 20, "ERROR SINTACTICO {}: FALTA PUNTO Y COMA  EN LA NOTIFICACION [#, %]");
-        gramatica.initialLineColumn();
-         
-        
-        gramatica.initialLineColumn();
-        /*AGRUPACION DE ESTRUCTURAS DE CONTROL*/
-        gramatica.group("ESTRUC_CONTROL", "(REPETIR | ESTRUCTURA_SI)");
-       // gramatica.group("ESTRUC_CONTROL_COMP", "ESTRUC_CONTROL PARENTESIS_A PARENTESIS_C");
-       // gramatica.group("ESTRUC_CONTROL", "(VALOR | PARAMETROS)");
-        gramatica.group("ESTRUC_CONTROL_COMP", "ESTRUC_CONTROL PARENTESIS_A (VALOR | PARAMETROS | OPLOGCOMP  ) PARENTESIS_C",true);
-        gramatica.group("ESTRUC_CONTROL_COMP", "ESTRUCTURA_SI",true);
-        gramatica.group("ESTRUC_CONTROL_COMP", "ESTRUC_CONTROL PARENTESIS_A (VALOR | PARAMETROS | OPLOGCOMP) PARENTESIS_C (ESTRUC_CONTROL_COMP)*",true);
-        
-        /*ELIMINACION DE ESTRUCTURAS DE CONTROL INCOMPLETAS*/
-        gramatica.delete("ESTRUC_CONTROL", 11, "ERROR SINTACTICO {}: La estructura de control no esta declarada correctamente [#,%]");
-
-        /*ELIMINACION DE PARENTESIS*/
-        gramatica.delete(new String[]{"PARENTESIS_A", "PARENTESIS_C"}, 12, "ERROR SINTACTICO{}: El parentesis [] no esta conetenido en una agrupacion [#,%]");
-
-        gramatica.finalLineColumn();
-        /*VERIFICACION DE PUNTO Y COMA AL FINAL DE LA SENTENCIA.*/
-
-        ////idenficador o variables
-        gramatica.group("VARIABLE_PC", "(VARIABLE | VARIABLECF) PUNTOyCOMA", true);
-        gramatica.group("VARIABLE_PC", "VARIABLE ", true, 13, "ERROR SINTACTICO{}: Se esperaba un  punto y coma al final de la variable[#,%]");
-        gramatica.group("VARIABLE_PC", "VARIABLECF ", true, 13, "ERROR SINTACTICO{}: Se esperaba un  punto y coma al final de llamada a Medicion[#,%]");
-        gramatica.group("FUNCION_COMP_PC", "FUNCION_COMP PUNTOyCOMA");
-        gramatica.group("FUNCION_COMP_EVA_PC", "FUNCION_COMP_MUT PUNTOyCOMA");
-        gramatica.group("FUNCION_COMP_PC", "FUNCION_COMP", 14, "ERROR SINTACTICO{}: Se esperaba un punto y coma al final de la declaracion de funcion");
-
-        gramatica.initialLineColumn();
-
-        //eliminacion del el punto y coma
-        gramatica.delete("PUNTOyCOMA", 15, "ERROR SINTACTICO{}: El punto y coma no esta al final de una sentencia");
-        gramatica.group("SENTENCIAS", "(VARIABLE_PC | FUNCION_COMP_PC | DISPENSACIONX)+");
-
-        gramatica.loopForFunExecUntilChangeNotDetected(() -> {
-            gramatica.group("ESTRUC_CONTROL_COMP_LASLC", "ESTRUC_CONTROL_COMP LLAVE_A (SENTENCIAS)? LLAVE_C", true);
-            gramatica.group("SENTENCIAS", "(SENTENCIAS | ESTRUC_CONTROL_COMP_LASLC)+");
-        });
-
-        /* ESTRUCTURAS DE FUNCION IMCOMPLETAS*/
-        gramatica.loopForFunExecUntilChangeNotDetected(() -> {
-            gramatica.initialLineColumn();
-            
-            gramatica.group("ESTRUC_CONTROL_COMP_LASLC", "ESTRUC_CONTROL_COMP (SENTENCIAS)? LLAVE_C", true, 16, "ERRROR SINTACTICO{}: Falta la llave que abre en la estructura de control [#,%]");
-
-            gramatica.finalLineColumn();//
-            gramatica.group("ESTRUC_CONTROL_COMP_LASLC", "ESTRUC_CONTROL_COMP LLAVE_A SENTENCIAS", true, 16, "ERRROR SINTACTICO{}: Falta la llave que cierra en la estructura de control [#,%]");
-
-            gramatica.group("SENTENCIAS", "(SENTENCIAS | ESTRUC_CONTROL_COMP_LASLC)");
-
-        });
-        
-        gramatica.delete(new String[]{"LLAVE_A", "LLAVE_C"}, 17, "ERROR SINTACTICO{}: La llave [] no esta contenida en una agrupacion[#,%]");
-        
-        production=gramatica.toString();
-       //gramatica.show();
-       String cadenaDondeBuscar = jtpEscritorio.getText();
-        String loQueQuieroBuscar = "final";
-        String[] palabras = loQueQuieroBuscar.split("\\s+");
-        for (String palabra : palabras) {
-            if (cadenaDondeBuscar.contains(palabra)) {
-                System.out.println("Encontrado");
+        System.out.println("tamaño "+tksintac.size());
+        production="";
+       while(estado==true && posicion<tksintac.size()){//&& posicion<tksintac.size()
+           
+        System.out.println("posicion = " + posicion);
+        System.out.println("entro ANALISIS");
+        tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+        String toke =tok.getLexicoComp();
+        switch(toke){
+            case "TIPO_DATO":
+                estado=autDECLARACION();
+                System.out.println("pasa esto");
                 
-                //aquí tu lógica en caso que se haya encontrado...
-            }else{finzz="ERROR SINTACTICO:=falta la finalizacion (final) al final del documento";}
-        }
+                break;
+            case "ESTRUCTURA_SI":
+                
+                estado=autSI();
+                
+                break;
+            case "ACCION_NOTIFICAR":
+                estado=autNOTIFICACION();
+                break;
+                
+            case "ACCION_CONTROL":
+                estado=autDISPOSITIVOS();
+                break;
+                
+            case "ACCION_MEDIR":
+                estado=autMEDICIONES();
+                break;
+            case "REPETIR":
+                estado=autREPETIR();
+                break;
+            case "IDENTIFICADOR":
+                estado=autOPERACIONES();
+                break;
+            default:
+                errores="error sintactico: No se esperaba ( "+tok.getLexema()
+            +" ) en la linea y columa ["+tok.getLinea()+","+tok.getColumna()+"]";
+           estado=false;
+                posicion=tksintac.size();
+                estado=false;
+                break;
+            }
+        
+        System.out.println("posicion = " + posicion);
+           System.out.println("tamaño array "+tksintac.size());
+           System.out.println("estado = " + estado);
+       
+        }//wuile
+    }
+    
+    //////////////////automata MEDICION DE SENSORES
+    public boolean autMEDICIONES(){
+        production+="MEDICION DE DATOS EN SENSORES\n";
+     
+        int q=0;
+        while(q<4){
+            tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+            switch(q){
+            case 0:
+            if("ACCION_MEDIR".equals(tok.getLexicoComp()) ){
+            production+="q0 --> q1 con ACCION_MEDIR\n";
+            posicion++;}else{
+            production+="q0 --> X\n";
+            qError("ACCION_MEDIR");return false;}//else q0
+            break;
+            case 1:
+            if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+            production+="q1 --> q2 con IDENTIFICADOR\n";
+            posicion++;}else {
+            production+="q1 --> X\n";
+            qError("IDENTIFICADOR");return false;}//else q1
+            break;
+            case 2:
+            if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+            production+="q2 --> q3 con IDENTIFICADOR\n";
+            posicion++;}else {
+            production+="q2 --> X\n";
+            qError("IDENTIFICADOR");return false;}//else q1
+            break;
+            
+            case 3:
+            if("PUNTOyCOMA".equals(tok.getLexicoComp()) ){
+            production+="q3 --> q4 con PUNTOyCOMA\n";
+            posicion++;}else{
+             production+="q3 --> X\n";
+            qError("PUNTOyCOMA");return false;}//else q2
+            break;
+          
+            default:
+                break;
+            }    
+            q++;
+        }//while
+        
+        return true;
+    }
+    
+    //////////////////automata declaracion de dispositivos
+    public boolean autDISPOSITIVOS(){
+        production+="DECLARACION DISPOSITIVOS \n";
+     
+        int q=0;
+        System.out.println("entra automata DISPOSITIVOS");
+        while(q<3){
+            tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+            switch(q){
+            case 0:
+            if("ACCION_CONTROL".equals(tok.getLexicoComp()) ){
+            production+="q0 --> q1 con ACCION_CONTROL\n";
+            posicion++;}else{
+            production+="q0 --> X\n";
+            qError("ACCION_CONTROL");return false;}//else q0
+            break;
+            case 1:
+            if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+            production+="q1 --> q2 con IDENTIFICADOR\n";
+            posicion++;}else {
+            production+="q1 --> X\n";
+            qError("IDENTIFICADOR");return false;}//else q1
+            break;
+            case 2:
+            if("PUNTOyCOMA".equals(tok.getLexicoComp()) ){
+            production+="q2 --> q3 con PUNTOyCOMA\n";
+            posicion++;}else{
+             production+="q2 --> X\n";
+            qError("PUNTOyCOMA");return false;}//else q2
+            break;
+          
+            default:
+                break;
+            }    
+            q++;
+        }//while
+        
+        return true;
+    }
+    
+    //////////////////automata notificacion
+    public boolean autNOTIFICACION(){
+        production+="NOTIFICACION \n";
+        int q=0;
+        System.out.println("entra automata NOTIFICACION");
+        while(q<3){
+            tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+            switch(q){
+            case 0:
+            if("ACCION_NOTIFICAR".equals(tok.getLexicoComp()) ){
+            production+="q0 --> q1 con ACCION_NOTIFICAR\n";
+            posicion++;}else{
+            production+="q0 --> X\n";
+            qError("ACCION_NOTIFICAR");return false;}//else q0
+            break;
+            case 1:
+            if("TEXTO".equals(tok.getLexicoComp()) ){
+            production+="q1 --> q2 con TEXTO\n";
+            posicion++;}else {
+            production+="q1 --> X\n";
+            qError("TEXTO");return false;}//else q1
+            break;
+            case 2:
+            if("PUNTOyCOMA".equals(tok.getLexicoComp()) ){
+            production+="q2 --> q3 con PUNTOyCOMA\n";
+            posicion++;}else{
+             production+="q2 --> X\n";
+            qError("PUNTOyCOMA");return false;}//else q2
+            break;
+          
+            default:
+                break;
+            }    
+            q++;
+        }//while
+        
+        return true;
     }
 
+    
+    //////////////////automata OPERACIONES
+    public boolean autOPERACIONES(){
+        int parentesisA=0;
+        int parentesisC=0;
+        String lineaA="",lineaC="";
+        tokenSintac tok2;
+        production+="OPERACIONES ARITMETICAS \n";
+        int q=0;
+        
+        while(q<7){
+            tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+            switch(q){
+            case 0:
+            if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==0){
+            production+="q0 --> q1 con IDENTIFICADOR\n";
+            posicion++;}else{
+            production+="q0 --> X\n";
+            qError("IDENTIFICADOR");return false;}//else q0
+            break;
+            case 1:
+            if("Op_Asig".equals(tok.getLexicoComp()) && q==1){
+            production+="q1 --> q2 con Op_Asig (-->) \n";
+            posicion++;}else {
+            production+="q1 --> X\n";
+            qError("Op_Asig");return false;}//else q1
+            break;
+            
+            case 2:
+            if("N_ENTERO".equals(tok.getLexicoComp())){
+            production+="q2 --> q3 con NUMERO\n";
+            posicion++;}else{
+                if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                production+="q2 --> q3 con IDENTIFICADOR\n";
+                posicion++;}    
+                    else{    
+                    if("PARENTESIS_A".equals(tok.getLexicoComp())){
+                     production+="q2 --> q4 con PARENTESIS_A\n";
+                     parentesisA++;
+                     lineaA="linea "+tok.getLinea() +"y Columna "+tok.getColumna();
+                     q=3;
+                    posicion++;
+                    }else{
+                    production+="q2 --> X\n";
+                    qError("NUMERO , IDENTIFICADOR o PARENTESIS_A");return false;
+                    }//else parentesis
+                }//else id
+            }//else numero
+            break;
+            
+            case 3:
+            if("SUMA".equals(tok.getLexicoComp()) ||"RESTA".equals(tok.getLexicoComp()) ||"DIVISION".equals(tok.getLexicoComp()) ||"MULTIPLICACION".equals(tok.getLexicoComp()) ){
+            production+="q3 --> q5 con OPERADOR_ARITMETICO\n";
+            posicion++;
+            q=4;}else{
+                if("PARENTESIS_C".equals(tok.getLexicoComp())){
+                    production+="q3 --> q6 con PARENTESIS_C\n";
+                    posicion++;
+                    parentesisC++;
+                    lineaC="linea "+tok.getLinea() +"y Columna "+tok.getColumna();;
+                    q=5;
+                    }else{
+                        if("PUNTOyCOMA".equals(tok.getLexicoComp())){
+                        production+="q3 --> q7 con PUNTOyCOMA\n";
+                        posicion++;
+                        q=6;
+                        }else{
+                            production+="q3 --> X\n";
+                            qError("OPERADOR_ARITMETICO o PARENTESIS_C");return false;
+                            }
+                        }
+                    }//else q3
+            break;
+            
+            case 4:
+            if("N_ENTERO".equals(tok.getLexicoComp())){
+            production+="q4 --> q3 con NUMERO\n";
+            posicion++; q=2;}else{
+                if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                production+="q4 --> q3 con IDENTIFICADOR\n";
+                posicion++;q=2;}    
+                    else{    
+                    if("PARENTESIS_A".equals(tok.getLexicoComp())){
+                     production+="q4 --> q4 con PARENTESIS_A\n";
+                     parentesisA++;
+                     lineaA="linea "+tok.getLinea() +"y Columna "+tok.getColumna();;
+                     q=3;
+                    posicion++;
+                    }else{
+                    production+="q4 --> X\n";
+                    qError("NUMERO , IDENTIFICADOR o PARENTESIS_A");return false;
+                    }//else parentesis
+                }//else id
+            }//else numero
+            
+            break;
+            
+            case 5:
+                if("N_ENTERO".equals(tok.getLexicoComp())){
+                production+="q5 --> q3 con NUMERO\n";
+                posicion++;q=2;}else{
+                    if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                   production+="q5 --> q3 con IDENTIFICADOR\n";
+                   posicion++;
+                    q=2;}    
+                       else{    
+                       if("PARENTESIS_A".equals(tok.getLexicoComp())){
+                        production+="q5 --> q4 con PARENTESIS_A\n";
+                        parentesisA++;
+                        lineaA="linea "+tok.getLinea() +"y Columna "+tok.getColumna();;
+                        q=3;
+                       posicion++;
+                       }else{
+                       production+="q5 --> X\n";
+                       qError("NUMERO , IDENTIFICADOR o PARENTESIS_A");return false;
+                       }//else parentesis
+                   }//else id
+               }//else numero
+            break;
+            
+            case 6:
+                if("SUMA".equals(tok.getLexicoComp()) ||"RESTA".equals(tok.getLexicoComp()) ||"DIVISION".equals(tok.getLexicoComp()) ||"MULTIPLICACION".equals(tok.getLexicoComp())){
+                production+="q6 --> q5 con OPERADOR ARITMETICO\n";
+                posicion++; q=4;}else{
+                    if("PUNTOyCOMA".equals(tok.getLexicoComp()) ){
+                    production+="q6 --> q7 con PUNTOyCOMA\n";
+                    posicion++;}    
+                    else{    
+                        if("PARENTESIS_C".equals(tok.getLexicoComp())){
+                         production+="q6 --> q6 con PARENTESIS_C\n";
+                         q=5;
+                         lineaC="linea "+tok.getLinea() +"y Columna "+tok.getColumna();;
+                         parentesisC++;
+                        posicion++;
+                            }else{
+                            production+="q6 --> X\n";
+                            qError("OPERADOR ARITMETICO , PUNTOyCOMA o PARENTESIS_C");return false;
+                            }//else parentesis
+                    }//else id
+                }//else numero
+                
+                break;
+            default:
+                break;
+            }    
+            q++;
+        }//while
+        if(parentesisA>parentesisC){ errores="error sintactico: FALTA CIERRE DE PARENTESIS en la OPERACION ARITMETICA EN LA LINEA "+lineaA;
+        return false;}
+        if(parentesisC>parentesisA){ errores="error sintactico: FALTA APERTURA DE PARENTESIS en la OPERACION ARITMETICA EN LA LINEA "+lineaC;
+        return false;}
+        
+        return true;
+    }
+    
+    
+    
+    //////////////////automata declaracion de variable
+    public boolean autDECLARACION(){
+        production+="DECLARACION DE VARIABLE \n";
+        System.out.println("posicion DV"+posicion);
+        int q=0;
+        System.out.println("entra automata declaracion");
+        while(q<5){
+            tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+            switch(q){
+            case 0:
+            if("TIPO_DATO".equals(tok.getLexicoComp()) && q==0){
+            production+="q0 --> q1 con TIPO_DATO\n";
+            posicion++;}else{
+            production+="q0 --> X\n";
+            qError("TIPO_DATO");return false;}//else q0
+            break;
+            case 1:
+            if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==1){
+            production+="q1 --> q2 con IDENTIFICADOR\n";
+            posicion++;}else {
+            production+="q1 --> X\n";
+            qError("IDENTIFICADOR");return false;}//else q1
+            break;
+            case 2:
+            if("Op_Asig".equals(tok.getLexicoComp()) && q==2){
+            production+="q2 --> q3 con Op_Asig (-->)\n";
+            posicion++;}else{
+             production+="q2 --> X\n";
+            qError("Op_Asig");return false;}//else q2
+            break;
+            case 3:
+            if("N_ENTERO".equals(tok.getLexicoComp()) && q==3){
+            production+="q3 --> q4 con N_ENTERO\n";
+            posicion++; }else{
+            production+="q3 --> X\n";
+            qError("N_ENTERO");return false;}//else q3
+            break;
+            case 4:
+            if("PUNTOyCOMA".equals(tok.getLexicoComp()) && q==4){
+            production+="q4 --> q5 con PUNTOyCOMA\n";
+            posicion++;
+            estado=true;}else{
+            production+="q3 --> X\n";
+            qError("PUNTOyCOMA");return false;}//else q4
+            break;
+            default:
+                break;
+            }    
+            q++;
+        }//while
+        
+        return true;
+    }
+    
+    //////////////////automata estructura si
+     public boolean autSI(){
+         production+="SENTENCIA SI \n";
+         boolean sen,con;
+         System.out.println("posicion si"+posicion);
+        int q=0;
+        System.out.println("entra automata SI");
+        while(q<11){
+            tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+            switch(q){
+            case 0:
+            if("ESTRUCTURA_SI".equals(tok.getLexicoComp())){
+            production+="q0 --> q1 con ESTRUCTURA_SI\n";
+            posicion++; }else{
+            production+="q0 --> X\n";
+             qError("ESTRUCTURA_SI");return false;}//else q0
+            break;
+            case 1:
+            if("PARENTESIS_A".equals(tok.getLexicoComp())){
+            production+="q1 --> q2 con PARENTESIS_A\n";
+            posicion++; }else{
+            production+="q1 --> X\n";
+             qError("PARENTESIS_A");return false;}//else q0
+            break;
+            case 2:
+                production+="q2 --> q3 con CONDICION \n";
+               con=autCONDICIONAL();
+               production+="CONTINUACION SENTENCIA SI \n";
+                if(con==true){}
+                if(con==false){/*qError("Estructura condicional erronea");*/return false;}
+                break;
+            case 3:
+            if("PARENTESIS_C".equals(tok.getLexicoComp())){
+            production+="q3 --> q4 con PARENTESIS_C\n";
+            posicion++; }else{
+            production+="q3 --> X\n";
+             qError("PARENTESIS_C");return false;}//else q0
+            break;
+            
+            case 4:
+             if("LLAVE_A".equals(tok.getLexicoComp())){
+            production+="q4 --> q5 con LLAVE_A ( { )\n";
+            posicion++;}else {
+            production+="q4 --> X\n";
+             qError("LLAVE_A ({)"); return false;}//else q1
+            break;
+            case 5:
+                production+="q5 --> q6 con SENTENCIA \n";
+                sen=controlSENTENCIA();
+                //sen=autDECLARACION();
+                production+="CONTINUACION SENTENCIA SI \n";
+                if(sen==true){}
+                if(sen==false){/*qError("Sentencia erroneea dentro del si");*/return false;}
+           
+            break;
+            case 6:
+            if("LLAVE_C".equals(tok.getLexicoComp())){
+            production+="q6 --> q7 con LLAVE_C (})\n";
+            posicion++;
+            estado=true;
+            tokenSintac tok2=(tokenSintac) tksintac.get(posicion);
+            if("ESTRUCTURA_SI_NO".equals(tok2.getLexicoComp())){}else{return true;}
+            }else{
+            production+="q6 --> X\n";
+            qError("LLAVE_C (})");return false;}//else q3
+            break;
+            
+            case 7:
+             if("ESTRUCTURA_SI_NO".equals(tok.getLexicoComp())){
+            production+="q7 --> q8 con ESTRUCTURA_SI_NO ( { )\n";
+            posicion++;}else {
+            production+="q7 --> X\n";
+             qError("ESTRUCTURA_SI_NO ({)"); return false;}//else q1
+            break;
+            
+            case 8:
+             if("LLAVE_A".equals(tok.getLexicoComp())){
+            production+="q8 --> q9 con LLAVE_A ( { )\n";
+            posicion++;}else {
+            production+="q8 --> X\n";
+             qError("LLAVE_A ({)"); return false;}//else q1
+            break;
+            case 9:
+                production+="q9 --> q10 con SENTENCIA \n";
+                sen=controlSENTENCIA();
+                //sen=autDECLARACION();
+                production+="CONTINUACION SENTENCIA SI \n";
+                if(sen==true){}
+                if(sen==false){/*qError("Sentencia erroneea dentro del si");*/return false;}
+           
+            break;
+            
+            case 10:
+            if("LLAVE_C".equals(tok.getLexicoComp())){
+            production+="q10 --> q11 con LLAVE_C (})\n";
+            posicion++;
+            estado=true;
+            }else{
+            production+="q10 --> X\n";
+            qError("LLAVE_C (})");return false;}//else q3
+            break;
+            default:
+                
+                break;
+            }    
+            q++;
+        }//while
+        
+         System.out.println("production = " + production);
+        return true;
+    }
+     
+    //////////////////automata estructura repetir
+     public boolean autREPETIR(){
+         production+="SENTENCIA REPETIR \n";
+         boolean sen,con;
+        int q=0;
+        
+        while(q<7){
+            tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+            switch(q){
+            case 0:
+            if("REPETIR".equals(tok.getLexicoComp())){
+            production+="q0 --> q1 con REPETIR\n";
+            posicion++; }else{
+            production+="q0 --> X\n";
+             qError("REPETIR");return false;}//else q0
+            break;
+            case 1:
+            if("PARENTESIS_A".equals(tok.getLexicoComp())){
+            production+="q1 --> q2 con PARENTESIS_A\n";
+            posicion++; }else{
+            production+="q1 --> X\n";
+             qError("PARENTESIS_A");return false;}//else q0
+            break;
+            case 2:
+                production+="q2 --> q3 con CONDICION \n";
+               con=autCONDICIONAL();
+               production+="CONTINUACION SENTENCIA REPETIR \n";
+                if(con==true){}
+                if(con==false){/*qError("Estructura condicional erronea");*/return false;}
+                break;
+            case 3:
+            if("PARENTESIS_C".equals(tok.getLexicoComp())){
+            production+="q3 --> q4 con PARENTESIS_C\n";
+            posicion++; }else{
+            production+="q3 --> X\n";
+             qError("PARENTESIS_C");return false;}//else q0
+            break;
+            
+            case 4:
+             if("LLAVE_A".equals(tok.getLexicoComp())){
+            production+="q4 --> q5 con LLAVE_A ( { )\n";
+            posicion++;}else {
+            production+="q4 --> X\n";
+             qError("LLAVE_A ({)"); return false;}//else q1
+            break;
+            case 5:
+                production+="q5 --> q6 con SENTENCIA \n";
+                sen=controlSENTENCIA();
+                //sen=autDECLARACION();
+                production+="CONTINUACION SENTENCIA REPETIR \n";
+                if(sen==true){}
+                if(sen==false){/*qError("Sentencia erroneea dentro del si");*/return false;}
+           
+            break;
+            case 6:
+            if("LLAVE_C".equals(tok.getLexicoComp())){
+            production+="q6 --> q7 con LLAVE_C (})\n";
+            posicion++;
+            estado=true;
+            }else{
+            production+="q6 --> X\n";
+            qError("LLAVE_C (})");return false;}//else q3
+            break;
+            default:
+                
+                break;
+            }    
+            q++;
+        }//while
+        
+         System.out.println("production = " + production);
+        return true;
+    }
+     
+    public boolean controlSENTENCIA(){
+         boolean ctrl=true;
+         boolean sente=true;
+         while(ctrl==true){//&& posicion<tksintac.size()
+        tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+        String toke =tok.getLexicoComp();
+        switch(toke){
+            case "TIPO_DATO":
+                sente=autDECLARACION();
+                break;
+            case "ESTRUCTURA_SI":
+                
+               sente=autSI();
+                
+                break;
+            case "ACCION_NOTIFICAR":
+                sente=autNOTIFICACION();
+                break;
+            
+            case "REPETIR":
+                sente=autREPETIR();
+                break;
+            case "ACCION_CONTROL":
+                sente=autDISPOSITIVOS();
+                break;
+            case "ACCION_MEDIR":
+                sente=autMEDICIONES();
+                break;  
+            case "IDENTIFICADOR":
+                sente=autOPERACIONES();
+                break;
+            case "LLAVE_C":
+                ctrl=false;
+                
+                return true;
+            default:
+                errores="error sintactico: No se esperaba ( "+tok.getLexema()
+            +" ) en la linea y columa ["+tok.getLinea()+","+tok.getColumna()+"]";
+            sente=false;
+                break;
+            }
+                if(sente==false)return false;
+       
+        }//wuile
+        return true; 
+     }
+    
+    //////////////////////automata estructura condicional
+    public boolean autCONDICIONAL(){
+        production+="ESTRUCTURA CONDICIONAL \n";
+        
+        int q=0;
+        while(q<4){
+            tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+            
+            switch(q){
+            case 0:
+                System.out.println(tok.getLexicoComp());
+            if("N_ENTERO".equals(tok.getLexicoComp())){
+            production+="q0 --> q1 con NUMERO\n";
+            posicion++;}else{
+                if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                production+="q0 --> q1 con IDENTIFICADOR\n";
+                posicion++;}    
+                    else{    
+                    production+="q0 --> X\n";
+                    qError("NUMERO o IDENTIFICADOR");return false;
+                }
+            }//else q0
+            break;
+            case 1:
+            if("MENOR_QUE".equals(tok.getLexicoComp())|| "DIFERENTE_DE".equals(tok.getLexicoComp()) || "MAYOR_QUE".equals(tok.getLexicoComp())
+                  ||  "MENOR_IGUAL_QUE".equals(tok.getLexicoComp()) || "MAYOR_IGUAL_QUE".equals(tok.getLexicoComp()) || "IGUAL_QUE".equals(tok.getLexicoComp()) || "DIFERENTE_DE".equals(tok.getLexicoComp()) ){
+            production+="q1 --> q2 con OP_LOGICO\n";
+            posicion++;}else {    
+                    production+="q1 --> X\n";
+                    qError(tok.getLexicoComp());return false;}//else q1
+            
+            break;
+            case 2:
+            if("N_ENTERO".equals(tok.getLexicoComp())){
+            production+="q2 --> q3 con NUMERO\n";
+            posicion++;}else{
+                if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                production+="q2 --> q3 con IDENTIFICADOR\n";
+                posicion++;}    
+                    else{    
+                    production+="q2 --> X\n";
+                    qError("NUMERO o IDENTIFICADOR");return false;
+            
+                }
+            }//else q0
+            break;
+            case 3:
+            if("OP_LOGICO".equals(tok.getLexicoComp()) ){
+            production+="q3 --> q4 con OP_LOGICO\n";
+            posicion++;
+            production+="q4 --> q0 \n";
+            q=-1;}else {    
+                    return true;
+                }//else q1
+            break;
+            default:
+                break;
+            }    
+            q++;
+        }//while
+        
+        return true;
+    }
+    public void qError(String esperado){
+        
+        System.out.println("entra a error");
+        tokenSintac tok=(tokenSintac) tksintac.get(posicion-1);
+        
+           errores="error sintactico: se esperaba un "+esperado+" despues de el token ( "+tok.getLexema()
+            +" ) en la linea y columa ["+tok.getLinea()+","+tok.getColumna()+"]";
+           estado=false;
+    }
+    
+    
+    
     private void SemanticAnalisis() {
 
     }
 
     private void ImprimirConsola() {
         int sizeErrors = errors.size();
-        if (sizeErrors > 0) {
-            Functions.sortErrorsByLineAndColumn(errors);
-            String strErro = "\n";
-            for (ErrorLSSL error : errors) {
-                String strError = String.valueOf(errors);
-                strErro += strError + "\n";
-
-            }
-            txaErrores.setText(finzz+"Compilacion terminada...\n" + strErro + "\nLa compilacion termino con errores");
+        if (errores==null) {
+            txaErrores.setText("Compilacion terminada");
+            
         } else {
-            txaErrores.setText(finzz+"Compilacion terminada");
+            txaErrores.setText(errores);
         }
     }
 

@@ -72,7 +72,7 @@ Numero_deci { return textColor(yychar, yylength(), new Color(35, 120, 147));}
 "K_"{cad} {return textColor(yychar, yylength(), new Color(255, 0, 255));}
     
 /*TIPO DATO*/
-ENTERO |
+NUMERO  |
 DOBLE |
 FLOTANTE |
 logico |
@@ -115,7 +115,7 @@ interrumpir { /* Ignorar */ }
 
 /* Estructura Si */
 si |
-sino { return textColor(yychar, yylength(), new Color(102, 205, 170)); }
+no { return textColor(yychar, yylength(), new Color(102, 205, 170)); }
 
 /* Final */
 final { return textColor(yychar, yylength(), new Color(255,175,175));}

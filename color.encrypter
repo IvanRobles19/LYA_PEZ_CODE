@@ -1,30 +1,35 @@
-principal CONTROL _PH
+NUMERO  _nose   -->1.54;
+NUMERO   _xd -->40 ;
+NUMERO   _suma -->45 ;
+NUMERO   _num1-->45 ;
 
-ENTERO _PHIDEAL --> 7 ;
-ENTERO _PH -->MEDIR  _S1 ;
-cadena _xd  --> 'MEDICION DE PH' ;
-
-/* funcion de control de PH 
-mediante la dispensacion de quimicos
-de funciones ya creadas
-*/
-
-repetir (_PHIdeal  !=  _PH ){
-	ENTERO _nose  --> 4554 ;
+//CONTROL _S1 ;
+_suma --> _num1+15;
+//& | !
+//MEDIR _S1 _no ;
+//+ - / *
+//no
+repetir(_nose >= 15  & _xd < 15.2 ){
 	
-	si (_PHIdeal < _PH){
-		//ACTIVACION DE  DISPOSITIVOS DE DISPERSACION DE SUSTANCIAS
-		DISPENSAR  _D1;
-	}  
-	si (_PHIdeal > _PH){
-		//ACTIVACION DE  DISPOSITIVOS DE DISPERSACION DE SUSTANCIAS
-		DISPENSAR  _D2;
-	}    //llave de cierre de la estuctura si 
-	
-	 _PH -->MEDIR  _S1 ;
+	//45
+	NOTIFICAR 'TEXTO' ;
+		
 }
 
-NOTIFICAR 'LA REGULACION DE EL PH DE AH COMPLETADO' ;
 
+NOTIFICAR   'INICIANDO ACCION DE PECERA';
+si(_nose >= 15  & _xd < 15.2 ){
+	NUMERO _nose -->14 ;
+	NUMERO _nose -->45 ;
+	//45
+	NOTIFICAR 'LO QUE SEA QUE VALLA A MANDAR';
+		
+}no{
+	NUMERO _nose -->45;
+}
+	NUMERO _nose -->14 ;
+//>=
+/*si{
+	ENTERO  _nose  --> 14;
+}*/
 
-final

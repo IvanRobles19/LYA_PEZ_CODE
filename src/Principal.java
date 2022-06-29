@@ -13,8 +13,9 @@ import java.io.File;
  */
 public class Principal {
     public static void main(String[] args) {
-        String ruta ="C:/Users/Ivanr/Desktop/ProyectoAutomatas/src/LexerColor.flex";
-        //String ruta ="C:/Users/Ivanr/Desktop/ProyectoAutomatas/src/Lexer.flex";
+        String ruta ="C:/Users/Ivanr/Desktop/6 Semestre/lenguajes y automatas/PEZ_CODE_1/src/LexerColor.flex";
+        
+        //String ruta ="C:/Users/Ivanr/Desktop/6 Semestre/lenguajes y automatas/PEZ_CODE_1/src/Lexer.flex";
         generarLexer (ruta);
     }
     public static void generarLexer(String ruta){

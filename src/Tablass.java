@@ -16,13 +16,17 @@ public class Tablass extends JDialog {
     /**
      * Creates new form Tablass
      */
+    private String producciones;
 //
      public Tablass( String produc) {
+         this.producciones=produc;
         initComponents();
         Iniciar(null);
         txtProducciones.setText(produc);
+        automata();
     }
 
+    
     public Tablass(JFrame Ventana, boolean Modal){
         //super(Ventana,Modal);
         initComponents();
@@ -32,6 +36,28 @@ public class Tablass extends JDialog {
     private void Iniciar(JFrame Ventana){
         this.setResizable(false);
         this.setLocationRelativeTo(Ventana);
+    }
+    
+    public void automata(){
+        String automata=" ";
+        int c=0;
+        String[] loQueQuieroBuscar2 = {"INICIO","ACCION_CONTROL","VALOR","SENTENCIAS","NOTIFICACION","FINAL"};
+        for (int i = 0; i < loQueQuieroBuscar2.length; i++) {
+            
+        String[] palabras = loQueQuieroBuscar2[i].split("\\s+");
+        for (String palabra : palabras) {
+            if (producciones.contains(palabra)) {
+                automata+=" --> "+loQueQuieroBuscar2[i];
+               // break;
+                //aquí tu lógica en caso que se haya encontrado...
+            }else{
+                automata+=" --> X";
+                c=1;
+                break;}
+        }
+            if (c==1){break;}
+        }//for
+        txtAutomata.setText(automata);
     }
 
     /**
@@ -68,6 +94,8 @@ public class Tablass extends JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtProducciones = new javax.swing.JTextArea();
         jLabel4 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txtAutomata = new javax.swing.JTextArea();
 
         jPanel1.setBackground(new java.awt.Color(102, 0, 102));
 
@@ -160,7 +188,7 @@ public class Tablass extends JDialog {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGap(75, 75, 75)
                 .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(148, Short.MAX_VALUE))
+                .addContainerGap(194, Short.MAX_VALUE))
         );
 
         jTabbedPane4.addTab("Op.Aritmeticos", jPanel8);
@@ -199,7 +227,7 @@ public class Tablass extends JDialog {
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addGap(71, 71, 71)
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addContainerGap(198, Short.MAX_VALUE))
         );
 
         jTabbedPane4.addTab("Op.Relacionales", jPanel9);
@@ -234,7 +262,7 @@ public class Tablass extends JDialog {
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addGap(67, 67, 67)
                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(156, Short.MAX_VALUE))
+                .addContainerGap(202, Short.MAX_VALUE))
         );
 
         jTabbedPane4.addTab("Op.Logicos", jPanel10);
@@ -245,11 +273,11 @@ public class Tablass extends JDialog {
         jTable5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTable5.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"MUTAR", "NUMERO(FASE)", "CAMBIA DE FASE AL VIRUS"},
-                {"EVALUAR", "NUMERO(NUM.DE FASE,CANTIDAD DE PAISES,TEMPERATURA)", "MUESTRA UNA POSIBLE ESTIMACION DE SU ALCANCE"},
-                {"FIJAR_ORIGEN", "NUMERO(LATITUD,ALTITUD)", "FIJA UN PUNTO CON RESPECTO A UN MAPA MUNDIAL"},
-                {"EXPANDIR", "NUMERO(CANTIDAD DE PAISES)", "EXTIENDE EL RADIO DE ALCANCE CON RESPECTO A SU ORIGEN"},
-                {"GENERAR_GRAF", "NUMERO(CANTIDAD DE PAISES,NUMERO DE INFECTADOS,FECHA INICIO,FECHA ACTUAL)", "MUESTRA UNA GRAFICA DE LA SECUENCIA QUE SIGUE EL VIRUS"},
+                {"MEDIR", "SENSOR", "OBTIENE VALORES DE SENSORES"},
+                {"DISPENSAR", "DISPOSITIVO", "HABILITA ACCION EN DISPOSITIVOS"},
+                {"LUZ", "CODIGO", "CAMBIA LUCES"},
+                {"NOTIFICAR", "MENSAJE", "MANDA AL DUEÑO UNA NOTIFICACION"},
+                {"CONTROL", "", ""},
                 {null, null, null}
             },
             new String [] {
@@ -272,7 +300,7 @@ public class Tablass extends JDialog {
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(67, 67, 67)
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(122, Short.MAX_VALUE))
+                .addContainerGap(168, Short.MAX_VALUE))
         );
 
         jTabbedPane4.addTab("Metodos", jPanel11);
@@ -283,19 +311,19 @@ public class Tablass extends JDialog {
         jTable9.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jTable9.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Fin"},
-                {"Dec"},
-                {"Cad"},
+                {"principal"},
+                {"ENTERO"},
+                {"cadena"},
                 {"Bool"},
                 {"Falso"},
                 {"Si"},
                 {"Sino"},
-                {"Para"},
+                {"repetir"},
                 {"Mientras"},
                 {"Evaluar"},
                 {"Arreglo"},
                 {"Func"},
-                {"Generar_Graf"},
+                {"flotante"},
                 {"Fase1"},
                 {"Fase2"},
                 {"Fase3"},
@@ -307,9 +335,9 @@ public class Tablass extends JDialog {
                 {"Nulo"},
                 {"Evaluar"},
                 {"Fijar_Origen"},
-                {"Mutar"},
-                {"Expandir"},
-                {"activo"},
+                {""},
+                {""},
+                {""},
                 {null}
             },
             new String [] {
@@ -330,7 +358,7 @@ public class Tablass extends JDialog {
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap(58, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(46, 46, 46))
         );
@@ -343,25 +371,39 @@ public class Tablass extends JDialog {
         txtProducciones.setRows(5);
         jScrollPane1.setViewportView(txtProducciones);
 
+        txtAutomata.setColumns(20);
+        txtAutomata.setRows(5);
+        jScrollPane3.setViewportView(txtAutomata);
+
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
         jPanel12Layout.setHorizontalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
-                .addGap(93, 93, 93)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(56, 56, 56)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 504, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel12Layout.createSequentialGroup()
+                        .addGap(362, 362, 362)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(66, 66, 66)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel12Layout.createSequentialGroup()
+                        .addGap(83, 83, 83)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 790, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         jPanel12Layout.setVerticalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
                 .addGap(41, 41, 41)
-                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel12Layout.createSequentialGroup()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(95, 95, 95))
+                    .addGroup(jPanel12Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jTabbedPane4.addTab("Producciones", jPanel12);
@@ -387,8 +429,8 @@ public class Tablass extends JDialog {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(74, 74, 74)
-                    .addComponent(jTabbedPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(74, Short.MAX_VALUE)))
+                    .addComponent(jTabbedPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 490, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(30, Short.MAX_VALUE)))
         );
 
         pack();
@@ -450,6 +492,7 @@ public class Tablass extends JDialog {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
@@ -461,6 +504,7 @@ public class Tablass extends JDialog {
     private javax.swing.JTable jTable7;
     private javax.swing.JTable jTable8;
     private javax.swing.JTable jTable9;
+    private javax.swing.JTextArea txtAutomata;
     private javax.swing.JTextArea txtProducciones;
     // End of variables declaration//GEN-END:variables
 }
