@@ -94,13 +94,11 @@ public class Compilador extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1200, 700));
-        setPreferredSize(new java.awt.Dimension(1200, 700));
         getContentPane().setLayout(null);
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 255));
         jPanel1.setLayout(null);
 
-        btnNuevo.setIcon(new javax.swing.ImageIcon("C:\\Users\\Ivanr\\Desktop\\PEZ_CODE\\src\\Imagenes\\agregar-archivo.png")); // NOI18N
         btnNuevo.setText("Nuevo");
         btnNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -108,9 +106,8 @@ public class Compilador extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btnNuevo);
-        btnNuevo.setBounds(10, 20, 110, 42);
+        btnNuevo.setBounds(10, 20, 110, 23);
 
-        btnAbrir.setIcon(new javax.swing.ImageIcon("C:\\Users\\Ivanr\\Desktop\\PEZ_CODE\\src\\Imagenes\\carpeta.png")); // NOI18N
         btnAbrir.setText("Abrir");
         btnAbrir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -118,9 +115,8 @@ public class Compilador extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btnAbrir);
-        btnAbrir.setBounds(120, 20, 100, 42);
+        btnAbrir.setBounds(120, 20, 100, 23);
 
-        btnGuardar.setIcon(new javax.swing.ImageIcon("C:\\Users\\Ivanr\\Desktop\\PEZ_CODE\\src\\Imagenes\\disquete.png")); // NOI18N
         btnGuardar.setText("Guardar");
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -128,9 +124,8 @@ public class Compilador extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btnGuardar);
-        btnGuardar.setBounds(220, 20, 110, 42);
+        btnGuardar.setBounds(220, 20, 72, 23);
 
-        btnCompilar.setIcon(new javax.swing.ImageIcon("C:\\Users\\Ivanr\\Desktop\\PEZ_CODE\\src\\Imagenes\\compilador.png")); // NOI18N
         btnCompilar.setText("Compilar");
         btnCompilar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -138,9 +133,8 @@ public class Compilador extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btnCompilar);
-        btnCompilar.setBounds(470, 20, 120, 42);
+        btnCompilar.setBounds(470, 20, 120, 23);
 
-        btnEjecutar.setIcon(new javax.swing.ImageIcon("C:\\Users\\Ivanr\\Desktop\\PEZ_CODE\\src\\Imagenes\\corriendo.png")); // NOI18N
         btnEjecutar.setText("Ejecutar");
         btnEjecutar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -150,7 +144,6 @@ public class Compilador extends javax.swing.JFrame {
         jPanel1.add(btnEjecutar);
         btnEjecutar.setBounds(590, 20, 120, 40);
 
-        btnGuardarC.setIcon(new javax.swing.ImageIcon("C:\\Users\\Ivanr\\Desktop\\PEZ_CODE\\src\\Imagenes\\guardar-como.png")); // NOI18N
         btnGuardarC.setText("Guardar Como");
         btnGuardarC.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -158,7 +151,7 @@ public class Compilador extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btnGuardarC);
-        btnGuardarC.setBounds(340, 20, 130, 42);
+        btnGuardarC.setBounds(340, 20, 130, 23);
 
         getContentPane().add(jPanel1);
         jPanel1.setBounds(6, 5, 740, 70);
@@ -187,8 +180,8 @@ public class Compilador extends javax.swing.JFrame {
         getContentPane().add(jScrollPane2);
         jScrollPane2.setBounds(10, 90, 820, 410);
 
-        btnSimbolos.setBackground(new java.awt.Color(51, 102, 255));
-        btnSimbolos.setIcon(new javax.swing.ImageIcon("C:\\Users\\Ivanr\\Desktop\\PEZ_CODE\\src\\Imagenes\\contenido-de-la-tabla.png")); // NOI18N
+        btnSimbolos.setBackground(new java.awt.Color(255, 153, 153));
+        btnSimbolos.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         btnSimbolos.setText("Tabla de simbolos");
         btnSimbolos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -199,7 +192,6 @@ public class Compilador extends javax.swing.JFrame {
         btnSimbolos.setBounds(770, 10, 180, 60);
 
         jLabel1.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 0, 13)); // NOI18N
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Ivanr\\Desktop\\PEZ_CODE\\src\\imagenes2\\virus.png")); // NOI18N
         jLabel1.setText("PEZ CODE");
         getContentPane().add(jLabel1);
         jLabel1.setBounds(960, 20, 110, 40);
@@ -211,7 +203,7 @@ public class Compilador extends javax.swing.JFrame {
             }
         });
         getContentPane().add(jspZomm);
-        jspZomm.setBounds(10, 500, 60, 20);
+        jspZomm.setBounds(10, 500, 60, 22);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
