@@ -124,7 +124,7 @@ public class Compilador extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btnGuardar);
-        btnGuardar.setBounds(220, 20, 72, 23);
+        btnGuardar.setBounds(220, 20, 71, 23);
 
         btnCompilar.setText("Compilar");
         btnCompilar.addActionListener(new java.awt.event.ActionListener() {
@@ -180,8 +180,7 @@ public class Compilador extends javax.swing.JFrame {
         getContentPane().add(jScrollPane2);
         jScrollPane2.setBounds(10, 90, 820, 410);
 
-        btnSimbolos.setBackground(new java.awt.Color(255, 153, 153));
-        btnSimbolos.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
+        btnSimbolos.setBackground(new java.awt.Color(51, 102, 255));
         btnSimbolos.setText("Tabla de simbolos");
         btnSimbolos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -203,7 +202,7 @@ public class Compilador extends javax.swing.JFrame {
             }
         });
         getContentPane().add(jspZomm);
-        jspZomm.setBounds(10, 500, 60, 22);
+        jspZomm.setBounds(10, 500, 60, 20);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -408,6 +407,7 @@ public class Compilador extends javax.swing.JFrame {
 
     private void SintacticAnalisis() {
          
+          
         System.out.println("tamaño "+tksintac.size());
         production="";
        while(estado==true && posicion<tksintac.size()){//&& posicion<tksintac.size()
@@ -419,6 +419,11 @@ public class Compilador extends javax.swing.JFrame {
         switch(toke){
             case "TIPO_DATO":
                 estado=autDECLARACION();
+                System.out.println("pasa esto");
+                
+                break;
+             case "CADENA":
+                estado=autDECLARACIOCAD();
                 System.out.println("pasa esto");
                 
                 break;
@@ -749,7 +754,7 @@ public class Compilador extends javax.swing.JFrame {
         System.out.println("posicion DV"+posicion);
         int q=0;
         System.out.println("entra automata declaracion");
-        while(q<5){
+        while(q<7){
             tokenSintac tok=(tokenSintac) tksintac.get(posicion);
             switch(q){
             case 0:
@@ -770,8 +775,21 @@ public class Compilador extends javax.swing.JFrame {
             if("Op_Asig".equals(tok.getLexicoComp()) && q==2){
             production+="q2 --> q3 con Op_Asig (-->)\n";
             posicion++;}else{
-             production+="q2 --> X\n";
-            qError("Op_Asig");return false;}//else q2
+                if("COMA".equals(tok.getLexicoComp()) && q==2 ){
+                   production+="q2 --> q5 con COMA (-->)\n"; 
+                   posicion++;
+                   q=4;   ////movi
+                }else{
+                    if("PUNTOyCOMA".equals(tok.getLexicoComp()) && q==2 ){
+                    production+="q2 --> q7 con COMA (-->)\n"; 
+                    posicion++;
+                    q=6;   ////movi
+                 }else{
+                    production+="q2 --> X\n";
+                 qError("Op_Asig o COMA o PUNTOyCOMA");return false; 
+                 }
+                }
+            }//else q2
             break;
             case 3:
             if("N_ENTERO".equals(tok.getLexicoComp()) && q==3){
@@ -783,11 +801,124 @@ public class Compilador extends javax.swing.JFrame {
             case 4:
             if("PUNTOyCOMA".equals(tok.getLexicoComp()) && q==4){
             production+="q4 --> q5 con PUNTOyCOMA\n";
+            q=6;
             posicion++;
             estado=true;}else{
             production+="q3 --> X\n";
             qError("PUNTOyCOMA");return false;}//else q4
             break;
+            case 5:
+            if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==5){
+            production+="q5 --> q6 con IDENTIFICADOR (-->)\n";
+            posicion++;}else{
+             production+="q5 --> X\n";
+            qError("IDENTIFICADOR");return false;}//else q2
+            break;
+            case 6:
+            if("COMA".equals(tok.getLexicoComp()) && q==6){
+            production+="q6 --> q5 con COMA (-->)\n";
+            posicion++;
+            q=4;}else{
+                if("PUNTOyCOMA".equals(tok.getLexicoComp()) && q==6 ){
+                   production+="q6 --> q7 con PUNTOyCOMA (-->)\n"; 
+                   posicion++;   ////movi
+                }else{
+                   production+="q6 --> X\n";
+                qError("PUNTOyCOMA o COMA");return false; 
+                }
+            }//else q2
+            break;
+            
+            default:
+                break;
+            }    
+            q++;
+        }//while
+        
+        return true;
+    }
+    
+     //////////////////automata declaracion de variable
+    public boolean autDECLARACIOCAD(){
+        production+="DECLARACION DE CADENA \n";
+        System.out.println("posicion DV"+posicion);
+        int q=0;
+        System.out.println("entra automata declaracion");
+        while(q<7){
+            tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+            switch(q){
+            case 0:
+            if("CADENA".equals(tok.getLexicoComp()) && q==0){
+            production+="q0 --> q1 con TIPO_DATO\n";
+            posicion++;}else{
+            production+="q0 --> X\n";
+            qError("CADENA");return false;}//else q0
+            break;
+            case 1:
+            if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==1){
+            production+="q1 --> q2 con IDENTIFICADOR\n";
+            posicion++;}else {
+            production+="q1 --> X\n";
+            qError("IDENTIFICADOR");return false;}//else q1
+            break;
+            case 2:
+            if("Op_Asig".equals(tok.getLexicoComp()) && q==2){
+            production+="q2 --> q3 con Op_Asig (-->)\n";
+            posicion++;}else{
+                if("COMA".equals(tok.getLexicoComp()) && q==2 ){
+                   production+="q2 --> q5 con COMA (-->)\n"; 
+                   posicion++;
+                   q=4;   ////movi
+                }else{
+                    if("PUNTOyCOMA".equals(tok.getLexicoComp()) && q==2 ){
+                    production+="q2 --> q7 con COMA (-->)\n"; 
+                    posicion++;
+                    q=6;   ////movi
+                 }else{
+                    production+="q2 --> X\n";
+                 qError("Op_Asig o COMA o PUNTOyCOMA");return false; 
+                 }
+                }
+            }//else q2
+            break;
+            case 3:
+            if("TEXTO".equals(tok.getLexicoComp()) && q==3){
+            production+="q3 --> q4 con TEXTO\n";
+            posicion++; }else{
+            production+="q3 --> X\n";
+            qError("TEXTO");return false;}//else q3
+            break;
+            case 4:
+            if("PUNTOyCOMA".equals(tok.getLexicoComp()) && q==4){
+            production+="q4 --> q5 con PUNTOyCOMA\n";
+            q=6;
+            posicion++;
+            estado=true;}else{
+            production+="q3 --> X\n";
+            qError("PUNTOyCOMA");return false;}//else q4
+            break;
+            case 5:
+            if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==5){
+            production+="q5 --> q6 con IDENTIFICADOR (-->)\n";
+            posicion++;}else{
+             production+="q5 --> X\n";
+            qError("IDENTIFICADOR");return false;}//else q2
+            break;
+            case 6:
+            if("COMA".equals(tok.getLexicoComp()) && q==6){
+            production+="q6 --> q5 con COMA (-->)\n";
+            posicion++;
+            q=4;}else{
+                if("PUNTOyCOMA".equals(tok.getLexicoComp()) && q==6 ){
+                   production+="q6 --> q7 con PUNTOyCOMA (-->)\n"; 
+                   posicion++;   ////movi
+                }else{
+                   production+="q6 --> X\n";
+                qError("PUNTOyCOMA o COMA");return false; 
+                }
+            }//else q2
+            break;
+            
             default:
                 break;
             }    
@@ -992,6 +1123,9 @@ public class Compilador extends javax.swing.JFrame {
         switch(toke){
             case "TIPO_DATO":
                 sente=autDECLARACION();
+                break;
+            case "CADENA":
+                sente=autDECLARACIOCAD();
                 break;
             case "ESTRUCTURA_SI":
                 

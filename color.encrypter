@@ -1,35 +1,22 @@
-NUMERO  _nose   -->1.54;
-NUMERO   _xd -->40 ;
-NUMERO   _suma -->45 ;
-NUMERO   _num1-->45 ;
+CONTROL  _PH;
+NUMERO  _N1;
+NUMERO  _N1,_sss, _suywy, _ywywh; //caso 1 que no se declare 2 veces
+//cadena _ns, _ns;
+cadena _ns -->'cadena de texto';
+cadena _ns,_n2s;
+NUMERO  _N1  --> 7 ;
+//NUMERO _PH  --> MEDIR _S1 ;
+NUMERO _PH  -->155;
+ _N1 -->_ns+54*(778) ; //caso 2 si se usa este declarada
+ _N1 -->_ns ; //caso 3 concuerde tipo de dato
+_suma --> 15 +_xd*(45-31) ; // caso 4 compatible en operaciones
 
-//CONTROL _S1 ;
-_suma --> _num1+15;
-//& | !
-//MEDIR _S1 _no ;
-//+ - / *
-//no
-repetir(_nose >= 15  & _xd < 15.2 ){
-	
-	//45
-	NOTIFICAR 'TEXTO' ;
-		
+_suma --> 15 + 45*(45-31) ;
+//_suma2 --> _suma +_ns; secundario
+repetir (_nose != _phideal){
+	cadena _ns -->'cadena de texto';
 }
 
+NOTIFICAR  'MANDA LA CADENA'  ;
 
-NOTIFICAR   'INICIANDO ACCION DE PECERA';
-si(_nose >= 15  & _xd < 15.2 ){
-	NUMERO _nose -->14 ;
-	NUMERO _nose -->45 ;
-	//45
-	NOTIFICAR 'LO QUE SEA QUE VALLA A MANDAR';
-		
-}no{
-	NUMERO _nose -->45;
-}
-	NUMERO _nose -->14 ;
-//>=
-/*si{
-	ENTERO  _nose  --> 14;
-}*/
-
+NOTIFICAR  'LA REGULACION DEL PH SE REALIZO CON EXITO'  ;
