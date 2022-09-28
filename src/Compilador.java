@@ -531,7 +531,12 @@ public class Compilador extends javax.swing.JFrame {
             qError("ACCION_CONTROL");return false;}//else q0
             break;
             case 1:
-            if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                
+           if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==1){
+                if(checkId(tok.getLexema())==1){
+                qErrorSem("El identificador ya se encuentra declarado (disp)");
+            }
+            identCotrol.add(new idControl(tok.getLexema(),tok.getLexicoComp()));
             production+="q1 --> q2 con IDENTIFICADOR\n";
             posicion++;}else {
             production+="q1 --> X\n";
@@ -879,7 +884,7 @@ public class Compilador extends javax.swing.JFrame {
             case 1:
             if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==1){
                 if(checkId(tok.getLexema())==1){
-                qErrorSem("El identificador ya se encuentra declarado");
+                qErrorSem("El identificador ya se encuentra declarado 2222");
             }
             identCotrol.add(new idControl(tok.getLexema(),tok.getLexicoComp()));
             production+="q1 --> q2 con IDENTIFICADOR\n";
@@ -1278,7 +1283,7 @@ public class Compilador extends javax.swing.JFrame {
         System.out.println("entra a error");
         tokenSintac tok=(tokenSintac) tksintac.get(posicion-1);
         
-           errores="error Semantico: "+" en la linea y columa ["+tok.getLinea()+","+tok.getColumna()+"], "+esperado;
+           errores="Error Semantico: "+" en la linea y columa ["+tok.getLinea()+","+tok.getColumna()+"], "+esperado;
            estado=false;
     }
     
