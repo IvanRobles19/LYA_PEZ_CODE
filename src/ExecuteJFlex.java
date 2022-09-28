@@ -6,7 +6,7 @@ import jflex.exceptions.SilentExit;
 
 /**
  *
- * @author Carlos
+ * @author IvanLH
  */
 public class ExecuteJFlex {
     public static void main(String omega[]){

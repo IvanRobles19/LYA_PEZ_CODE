@@ -41,12 +41,13 @@ public class Compilador extends javax.swing.JFrame {
     private ArrayList<TextColor> textsColor;
     private Timer timerKeyReleased;
     private ArrayList<Production> identProd;
+    private ArrayList<idControl> identCotrol= new ArrayList();
     private HashMap<String, String> identificadores;
     private boolean codeHasBeenCompiled = false;
     private int tamañojsp =11;
     private int tamAnte=100;
     private String finzz ="";
-    ArrayList<tokenSintac> tksintac = new ArrayList();
+    private ArrayList<tokenSintac> tksintac = new ArrayList();
     private int posicion=0;
     private boolean estado=true;
     private String estados;
@@ -230,6 +231,7 @@ public class Compilador extends javax.swing.JFrame {
 
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
         tksintac.clear();
+        identCotrol.clear();
         posicion=0;
         estado=true;
         production=null;
@@ -406,10 +408,9 @@ public class Compilador extends javax.swing.JFrame {
     }
 
     private void SintacticAnalisis() {
-         
-          
-        System.out.println("tamaño "+tksintac.size());
-        production="";
+
+       System.out.println("tamaño "+tksintac.size());
+       production="";
        while(estado==true && posicion<tksintac.size()){//&& posicion<tksintac.size()
            
         System.out.println("posicion = " + posicion);
@@ -499,7 +500,8 @@ public class Compilador extends javax.swing.JFrame {
             if("PUNTOyCOMA".equals(tok.getLexicoComp()) ){
             production+="q3 --> q4 con PUNTOyCOMA\n";
             posicion++;}else{
-             production+="q3 --> X\n";
+            production+="q3 --> X\n";
+            
             qError("PUNTOyCOMA");return false;}//else q2
             break;
           
@@ -606,6 +608,9 @@ public class Compilador extends javax.swing.JFrame {
             switch(q){
             case 0:
             if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==0){
+                if(checkId(tok.getLexema())==0){
+                qErrorSem("El identificador no se encuentra declarado");
+                }
             production+="q0 --> q1 con IDENTIFICADOR\n";
             posicion++;}else{
             production+="q0 --> X\n";
@@ -624,6 +629,9 @@ public class Compilador extends javax.swing.JFrame {
             production+="q2 --> q3 con NUMERO\n";
             posicion++;}else{
                 if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                    if(checkId(tok.getLexema())==0){
+                    qErrorSem("El identificador no se encuentra declarado");
+                    }    
                 production+="q2 --> q3 con IDENTIFICADOR\n";
                 posicion++;}    
                     else{    
@@ -670,6 +678,9 @@ public class Compilador extends javax.swing.JFrame {
             production+="q4 --> q3 con NUMERO\n";
             posicion++; q=2;}else{
                 if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                    if(checkId(tok.getLexema())==0){
+                qErrorSem("El identificador no se encuentra declarado");
+                }
                 production+="q4 --> q3 con IDENTIFICADOR\n";
                 posicion++;q=2;}    
                     else{    
@@ -693,6 +704,9 @@ public class Compilador extends javax.swing.JFrame {
                 production+="q5 --> q3 con NUMERO\n";
                 posicion++;q=2;}else{
                     if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                        if(checkId(tok.getLexema())==0){
+                qErrorSem("El identificador no se encuentra declarado");
+                }
                    production+="q5 --> q3 con IDENTIFICADOR\n";
                    posicion++;
                     q=2;}    
@@ -766,6 +780,10 @@ public class Compilador extends javax.swing.JFrame {
             break;
             case 1:
             if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==1){
+            if(checkId(tok.getLexema())==1){
+                qErrorSem("El identificador ya se encuentra declarado");
+            }
+            identCotrol.add(new idControl(tok.getLexema(),tok.getLexicoComp()));
             production+="q1 --> q2 con IDENTIFICADOR\n";
             posicion++;}else {
             production+="q1 --> X\n";
@@ -809,6 +827,10 @@ public class Compilador extends javax.swing.JFrame {
             break;
             case 5:
             if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==5){
+            if(checkId(tok.getLexema())==1){
+                qErrorSem("El identificador ya se encuentra declarado");
+            }
+            identCotrol.add(new idControl(tok.getLexema(),tok.getLexicoComp()));
             production+="q5 --> q6 con IDENTIFICADOR (-->)\n";
             posicion++;}else{
              production+="q5 --> X\n";
@@ -856,6 +878,10 @@ public class Compilador extends javax.swing.JFrame {
             break;
             case 1:
             if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==1){
+                if(checkId(tok.getLexema())==1){
+                qErrorSem("El identificador ya se encuentra declarado");
+            }
+            identCotrol.add(new idControl(tok.getLexema(),tok.getLexicoComp()));
             production+="q1 --> q2 con IDENTIFICADOR\n";
             posicion++;}else {
             production+="q1 --> X\n";
@@ -899,6 +925,10 @@ public class Compilador extends javax.swing.JFrame {
             break;
             case 5:
             if("IDENTIFICADOR".equals(tok.getLexicoComp()) && q==5){
+                if(checkId(tok.getLexema())==1){
+                qErrorSem("El identificador ya se encuentra declarado");
+            }
+            identCotrol.add(new idControl(tok.getLexema(),tok.getLexicoComp()));
             production+="q5 --> q6 con IDENTIFICADOR (-->)\n";
             posicion++;}else{
              production+="q5 --> X\n";
@@ -1179,6 +1209,9 @@ public class Compilador extends javax.swing.JFrame {
             production+="q0 --> q1 con NUMERO\n";
             posicion++;}else{
                 if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                 if(checkId(tok.getLexema())==0){
+                qErrorSem("El identificador no se encuentra declarado");
+                }
                 production+="q0 --> q1 con IDENTIFICADOR\n";
                 posicion++;}    
                     else{    
@@ -1201,6 +1234,9 @@ public class Compilador extends javax.swing.JFrame {
             production+="q2 --> q3 con NUMERO\n";
             posicion++;}else{
                 if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                     if(checkId(tok.getLexema())==0){
+                qErrorSem("El identificador no se encuentra declarado");
+                }
                 production+="q2 --> q3 con IDENTIFICADOR\n";
                 posicion++;}    
                     else{    
@@ -1237,6 +1273,35 @@ public class Compilador extends javax.swing.JFrame {
            estado=false;
     }
     
+    public void qErrorSem(String esperado){
+        
+        System.out.println("entra a error");
+        tokenSintac tok=(tokenSintac) tksintac.get(posicion-1);
+        
+           errores="error Semantico: "+" en la linea y columa ["+tok.getLinea()+","+tok.getColumna()+"], "+esperado;
+           estado=false;
+    }
+    
+    public int checkId(String idm){
+        for (idControl ids : identCotrol) {
+            if(ids.getId().equals(idm)){
+                return 1;//ya esta inicializado
+            }
+          }  
+        return 0;
+    }
+    
+    public int checktipDatId(String idm, String dat){
+        for (idControl ids : identCotrol) {
+            if(ids.getId().equals(idm)){
+                if(ids.getTipoDato().equals(dat)){
+                   return 0;//tipo de dato correcto 
+                }
+                return 1; //el tipo de dato no es correcto
+            }
+          }  
+        return 2;//id no inicializado
+    }
     
     
     private void SemanticAnalisis() {
