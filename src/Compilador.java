@@ -444,6 +444,9 @@ public class Compilador extends javax.swing.JFrame {
             case "ACCION_MEDIR":
                 estado=autMEDICIONES();
                 break;
+            case "ACCION_DISPENSAR":
+                estado=autDISPENSAR();
+                break;
             case "REPETIR":
                 estado=autREPETIR();
                 break;
@@ -467,12 +470,11 @@ public class Compilador extends javax.swing.JFrame {
         }//wuile
     }
     
-    //////////////////automata MEDICION DE SENSORES
     public boolean autMEDICIONES(){
         production+="MEDICION DE DATOS EN SENSORES\n";
      
         int q=0;
-        while(q<4){
+        while(q<5){
             tokenSintac tok=(tokenSintac) tksintac.get(posicion);
             switch(q){
             case 0:
@@ -483,7 +485,84 @@ public class Compilador extends javax.swing.JFrame {
             qError("ACCION_MEDIR");return false;}//else q0
             break;
             case 1:
+            if("RESERVADA_PH".equals(tok.getLexicoComp()) || "RESERVADA_NIVEL".equals(tok.getLexicoComp()) ||"RESERVADA_TEMP".equals(tok.getLexicoComp()) ){
+            production+="q0 --> q1 con ACCION_MEDIR\n";
+            posicion++;}else{
+            production+="q0 --> X\n";
+            qError("ACCION_MEDIR");return false;}//else q0
+            break;
+            case 2:
             if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                
+                if(checkId(tok.getLexema())==0){
+                qErrorSem("El identificador no se encuentra declarado");
+                }
+                if(checktipDatId(tok.getLexema(),"SENSOR")==1){
+                    qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible deberia ser tipo SENSOR");
+                    return false;
+                }
+            production+="q1 --> q2 con IDENTIFICADOR\n";
+            posicion++;}else {
+            production+="q1 --> X\n";
+            qError("IDENTIFICADOR");return false;}//else q1
+            break;
+            case 3:
+            if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                if(checkId(tok.getLexema())==0){
+                qErrorSem("El identificador no se encuentra declarado");
+                }
+                if(checktipDatId(tok.getLexema(),"NUMERO")==1){
+                    qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible deberia ser tipo NUMERO");
+                    return false;
+                }
+            production+="q2 --> q3 con IDENTIFICADOR\n";
+            posicion++;}else {
+            production+="q2 --> X\n";
+            qError("IDENTIFICADOR");return false;}//else q1
+            break;
+            
+            case 4:
+            if("PUNTOyCOMA".equals(tok.getLexicoComp()) ){
+            production+="q3 --> q4 con PUNTOyCOMA\n";
+            posicion++;}else{
+            production+="q3 --> X\n";
+            
+            qError("PUNTOyCOMA");return false;}//else q2
+            break;
+          
+            default:
+                break;
+            }    
+            q++;
+        }//while
+        
+        return true;
+    }
+    
+    public boolean autDISPENSAR(){
+        production+="activar sensor\n";
+     
+        int q=0;
+        while(q<5){
+            tokenSintac tok=(tokenSintac) tksintac.get(posicion);
+            switch(q){
+            case 0:
+            if("ACCION_DISPENSAR".equals(tok.getLexicoComp()) ){
+            production+="q0 --> q1 con ACCION_DISPENSAR\n";
+            posicion++;}else{
+            production+="q0 --> X\n";
+            qError("ACCION_DISPENSAR");return false;}//else q0
+            break;
+            case 1:
+            if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                
+                if(checkId(tok.getLexema())==0){
+                qErrorSem("El identificador no se encuentra declarado");
+                }
+                if(checktipDatId(tok.getLexema(),"SENSOR")==1){
+                    qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible deberia ser tipo SENSOR");
+                    return false;
+                }
             production+="q1 --> q2 con IDENTIFICADOR\n";
             posicion++;}else {
             production+="q1 --> X\n";
@@ -491,6 +570,13 @@ public class Compilador extends javax.swing.JFrame {
             break;
             case 2:
             if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                if(checkId(tok.getLexema())==0){
+                qErrorSem("El identificador no se encuentra declarado");
+                }
+                if(checktipDatId(tok.getLexema(),"NUMERO")==1){
+                    qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible deberia ser tipo NUMERO");
+                    return false;
+                }
             production+="q2 --> q3 con IDENTIFICADOR\n";
             posicion++;}else {
             production+="q2 --> X\n";
@@ -536,7 +622,7 @@ public class Compilador extends javax.swing.JFrame {
                 if(checkId(tok.getLexema())==1){
                 qErrorSem("El identificador ya se encuentra declarado (disp)");
             }
-            identCotrol.add(new idControl(tok.getLexema(),tok.getLexicoComp()));
+            identCotrol.add(new idControl(tok.getLexema(),"SENSOR"));
             production+="q1 --> q2 con IDENTIFICADOR\n";
             posicion++;}else {
             production+="q1 --> X\n";
@@ -575,7 +661,15 @@ public class Compilador extends javax.swing.JFrame {
             qError("ACCION_NOTIFICAR");return false;}//else q0
             break;
             case 1:
-            if("TEXTO".equals(tok.getLexicoComp()) ){
+            if("TEXTO".equals(tok.getLexicoComp()) || "IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                if(checkId(tok.getLexema())==0 && "IDENTIFICADOR".equals(tok.getLexicoComp()) ){
+                qErrorSem("El identificador No esta declarado");
+                }
+                if("IDENTIFICADOR".equals(tok.getLexicoComp()) && checktipDatId(tok.getLexema(),"CADENA")==1){
+                    qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible deberia ser tipo CADENA");
+                    return false;
+                }
+                
             production+="q1 --> q2 con TEXTO\n";
             posicion++;}else {
             production+="q1 --> X\n";
@@ -626,7 +720,7 @@ public class Compilador extends javax.swing.JFrame {
                 if(checkId(tok.getLexema())==0){
                 qErrorSem("El identificador no se encuentra declarado");
                 }
-            if(checktipDatId(tok.getLexema(),"CADENA")==0){
+            if(checktipDatId(tok.getLexema(),"NUMERO")==1){
                 qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible deberia ser tipo NUMERO");
                 return false;
             }
@@ -651,7 +745,7 @@ public class Compilador extends javax.swing.JFrame {
                     if(checkId(tok.getLexema())==0){
                     qErrorSem("El identificador no se encuentra declarado");
                     }   
-                     if(checktipDatId(tok.getLexema(),"CADENA")==0){
+                     if(checktipDatId(tok.getLexema(),"NUMERO")==1){
                         qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible deberia ser tipo NUMERO");
                         return false;
                      }
@@ -706,7 +800,7 @@ public class Compilador extends javax.swing.JFrame {
                     if(checkId(tok.getLexema())==0){
                 qErrorSem("El identificador no se encuentra declarado");
                 }
-                         if(checktipDatId(tok.getLexema(),"CADENA")==0){
+                         if(checktipDatId(tok.getLexema(),"NUMERO")==1){
                         qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible deberia ser tipo NUMERO");
                         return false;
                      }
@@ -736,7 +830,7 @@ public class Compilador extends javax.swing.JFrame {
                         if(checkId(tok.getLexema())==0){
                 qErrorSem("El identificador no se encuentra declarado");
                 }
-                         if(checktipDatId(tok.getLexema(),"CADENA")==0){
+                         if(checktipDatId(tok.getLexema(),"NUMERO")==1){
                         qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible deberia ser tipo NUMERO");
                         return false;
                      }
@@ -1026,7 +1120,7 @@ public class Compilador extends javax.swing.JFrame {
                 return false;
                 }
 
-                if("N_ENTERO".equals(tok.getLexicoComp()) && q==2 ){
+                if("N_ENTERO".equals(tok.getLexicoComp()) && q==2 || checktipDatId(tok.getLexema(),"NUMERO")==0){
                  
                     qErrorSem("Tipo de dato incompatible deberia de ser TEXTO");
                     return false;
@@ -1058,7 +1152,7 @@ public class Compilador extends javax.swing.JFrame {
                 if(checkId(tok.getLexema())==0 && "IDENTIFICADOR".equals(tok.getLexicoComp()) && q==4){
                 qErrorSem("El identificador no se encuentra declarado");
                 }
-                if(checktipDatId(tok.getLexema(),"NUMERO")==0){
+                if(checktipDatId(tok.getLexema(),"SENSOR")==0){
                 qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible deberia ser tipo TEXTO");
                  }
             production+="q4 --> q3 con TEXTO\n";
@@ -1284,7 +1378,9 @@ public class Compilador extends javax.swing.JFrame {
             case "ACCION_NOTIFICAR":
                 sente=autNOTIFICACION();
                 break;
-            
+            case "ACCION_DISPENSAR":
+                sente=autDISPENSAR();
+                break;
             case "REPETIR":
                 sente=autREPETIR();
                 break;
@@ -1317,7 +1413,7 @@ public class Compilador extends javax.swing.JFrame {
     //////////////////////automata estructura condicional
     public boolean autCONDICIONAL(){
         production+="ESTRUCTURA CONDICIONAL \n";
-        
+        String tipoRepe=" ";
         int q=0;
         while(q<4){
             tokenSintac tok=(tokenSintac) tksintac.get(posicion);
@@ -1330,8 +1426,10 @@ public class Compilador extends javax.swing.JFrame {
             posicion++;}else{
                 if("IDENTIFICADOR".equals(tok.getLexicoComp()) ){
                  if(checkId(tok.getLexema())==0){
+                     
                 qErrorSem("El identificador no se encuentra declarado");
                 }
+                tipoRepe=obtenerTipId(tok.getLexema());
                 production+="q0 --> q1 con IDENTIFICADOR\n";
                 posicion++;}    
                     else{    
@@ -1357,6 +1455,10 @@ public class Compilador extends javax.swing.JFrame {
                      if(checkId(tok.getLexema())==0){
                 qErrorSem("El identificador no se encuentra declarado");
                 }
+                    if(checktipDatId(tok.getLexema(),tipoRepe)==1){
+                    qErrorSem("El Tipo de dato del IDENTIFICADOR es incompatible ");
+                    return false;
+                    }
                 production+="q2 --> q3 con IDENTIFICADOR\n";
                 posicion++;}    
                     else{    
@@ -1410,7 +1512,14 @@ public class Compilador extends javax.swing.JFrame {
           }  
         return 0;
     }
-    
+    public String obtenerTipId(String idm){
+        for (idControl ids : identCotrol) {
+            if(ids.getId().equals(idm)){
+                return ids.getTipoDato();//ya esta inicializado
+            }
+          }  
+        return "";
+    }
     public int checktipDatId(String idm, String dat){
         System.out.println("-----------------------------------------");
         for (idControl ids : identCotrol) {

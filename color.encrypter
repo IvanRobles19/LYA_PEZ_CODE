@@ -1,31 +1,37 @@
-CONTROL  _PH;
+CONTROL  _S1;
+CONTROL  _S2;
+NUMERO _PHActualPecera;
+NUMERO _PHIdeal --> 6.6 ;
+NOTIFICAR  'INICIANDO CONTROL DE PH DE LA PECERA'  ;
+//NUMERO _PHIdeal ;
 
-CONTROL  _PH24;
-NUMERO  _N1;
-NUMERO  _ddN1,_Ndd1, _suywy ; //caso 1 que no se declare 2 veces--ya
-//cadena _ns, _ns;
-cadena _ns -->'cadena de texto';
-cadena _n7,_tipodat ;
-NUMERO  _N81  --> 7 ;
-//NUMERO _PH  --> MEDIR _S1 ;
-NUMERO _PH2  -->155;
- _N1 -->_N81+54*(778) ; //caso 2 si se usa y no este declarada --listo
-// _N1 -->'cadena de texto' ; //caso 3 concuerde tipo de dato
-_ns --> 'nosejsjsj'+45+'no se que pasa';
-//_ns --> 555;
-//_N81-->'paul se la come';
-NUMERO _suma;
-_suma --> 15 + _PH *(45-31) ; // caso 4 compatible en operaciones
-_suma --> 0;
-_suma --> 15 + 47*(45-31) ;
-_tipodat -->_ns;
-_tipodat --> 'el trexto que sea 0'+'otro texto';
-//_suma2 --> _suma +_ns; secundario
-repetir (_suma != _ns){//corregr esto
-	cadena _nkk -->'cadena de texto';
-	_nkk -->'cadena de texto'+'EL TEXTO'+475;
+MEDIR PH _S1 _PHActualPecera;
+
+cadena _mensaje,_menQuim;
+/*_mensaje --> _PHActualPecera;
+_mensaje --> 45;*/
+_mensaje --> 'el ph actual de la pecera es de '+ _PHActualPecera;
+NOTIFICAR  _mensaje ;
+//NOTIFICAR  _PHActualPecera;
+///NOTIFICAR  _Pecera; // no esta declarado
+	
+/*
+repetir (_PHActualPecera !=_mensaje){
+	
+}*/
+
+NUMERO _QuimiDis-->0.1;
+NUMERO _totalQuimiDis-->0;
+repetir (_PHActualPecera !=_PHIdeal ){
+	DISPENSAR _S2  _QuimiDis ;
+	_totalQuimiDis-->_totalQuimiDis+_QuimiDis;
+	MEDIR PH _S1 _PHActualPecera;
 }
 
-NOTIFICAR  'MANDA LA CADENA'  ;
+_mensaje --> 'el ph actual de la pecera es de '+ _PHActualPecera;
 
-NOTIFICAR  'LA REGULACION DEL PH SE REALIZO CON EXITO'  ;
+_menQuim --> 'el ph actual de la pecera es de '+ _PHActualPecera;
+NOTIFICAR  _mensaje ;
+NOTIFICAR _menQuim;
+
+
